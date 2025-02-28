@@ -8,8 +8,6 @@
 
 ---
 
-- [ ] **Task 0.1**: Initialize Git repository and set up branch policies  
-  - **Role**: Full-Stack Developer  
 - [ ] **Task 0.3**: Configure CI/CD pipeline with a basic build  
   - **Role**: Full-Stack Developer  
 - [ ] **Task 0.4**: Set up development environment (Node.js, Typescript, VS Code)  
