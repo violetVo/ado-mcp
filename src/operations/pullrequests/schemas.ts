@@ -1,57 +1,122 @@
+import { CommentThreadStatus, GitPullRequestCommentThread } from 'azure-devops-node-api/interfaces/GitInterfaces';
 import { z } from 'zod';
 
-// Base schema for common pull request fields
-const BasePRSchema = z.object({
-  projectId: z.string().describe("The ID or name of the project"),
-  repositoryId: z.string().describe("The ID or name of the repository"),
-  pullRequestId: z.number().describe("The ID of the pull request")
+export interface PullRequestCommentLocation {
+    startLine?: number;
+    endLine?: number;
+    startOffset?: number;
+    endOffset?: number;
+}
+
+export interface PullRequestCommentResponse {
+    filePath: string;
+    location: PullRequestCommentLocation;
+    content: string;
+    status: number;
+    threadId: number;
+    author: string;
+}
+
+interface ValidThread extends GitPullRequestCommentThread {
+    comments: Array<{
+        content: string;
+        author: {
+            displayName: string;
+        };
+    }>;
+    threadContext: {
+        filePath: string;
+        rightFileStart?: { line: number; offset: number };
+        rightFileEnd?: { line: number; offset: number };
+    };
+    status: CommentThreadStatus;
+    id: number;
+}
+
+// Using the actual Azure DevOps API type instead of our custom interface
+export function processPullRequestComments(threads: GitPullRequestCommentThread[]): PullRequestCommentResponse[] {
+    return threads
+        // Filter out threads with null pullRequestThreadContext or missing required data
+        .filter((thread): thread is ValidThread => {
+            return Boolean(
+                thread.pullRequestThreadContext !== null &&
+                thread.comments?.[0]?.content &&
+                thread.comments?.[0]?.author?.displayName &&
+                thread.threadContext?.filePath &&
+                typeof thread.status === 'number' &&
+                typeof thread.id === 'number'
+            );
+        })
+        // Map to our response format
+        .map(thread => ({
+            filePath: thread.threadContext.filePath,
+            location: {
+                startLine: thread.threadContext.rightFileStart?.line,
+                endLine: thread.threadContext.rightFileEnd?.line,
+                startOffset: thread.threadContext.rightFileStart?.offset,
+                endOffset: thread.threadContext.rightFileEnd?.offset
+            },
+            content: thread.comments[0].content,
+            status: thread.status,
+            threadId: thread.id,
+            author: thread.comments[0].author.displayName
+        }));
+}
+
+// Zod schemas for operations
+export const GetPullRequestSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    projectId: z.string()
 });
 
-// Schema for getting a pull request
-export const GetPullRequestSchema = BasePRSchema;
-
-// Schema for listing pull requests
 export const ListPullRequestsSchema = z.object({
-  projectId: z.string().describe("The ID or name of the project"),
-  repositoryId: z.string().describe("The ID or name of the repository"),
-  status: z.enum(['active', 'abandoned', 'completed', 'all'])
-    .optional()
-    .describe("Filter PRs by status"),
-  creatorId: z.string().optional().describe("Filter by PR creator"),
-  reviewerId: z.string().optional().describe("Filter by reviewer"),
-  sourceRefName: z.string().optional().describe("Source branch name"),
-  targetRefName: z.string().optional().describe("Target branch name"),
-  includeLinks: z.boolean().optional().describe("Include reference links")
+    repositoryId: z.string(),
+    projectId: z.string(),
+    status: z.string().optional(),
+    creatorId: z.string().optional(),
+    reviewerId: z.string().optional(),
+    sourceRefName: z.string().optional(),
+    targetRefName: z.string().optional(),
+    includeLinks: z.boolean().optional()
 });
 
-// Schema for listing PR comments
-export const ListPRCommentsSchema = BasePRSchema.extend({
-  includeDeleted: z.boolean().optional().describe("Include deleted comments")
+export const ListPRCommentsSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    projectId: z.string()
 });
 
-// Schema for updating PR comment
-export const UpdatePRCommentSchema = BasePRSchema.extend({
-  threadId: z.number().describe("The thread ID containing the comment"),
-  commentId: z.number().describe("The ID of the comment to update"),
-  content: z.string().describe("The new comment content")
+export const UpdatePRCommentSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    threadId: z.number(),
+    commentId: z.number(),
+    content: z.string(),
+    projectId: z.string()
 });
 
-// Schema for updating PR thread status
-export const UpdatePRThreadStatusSchema = BasePRSchema.extend({
-  threadId: z.number().describe("The thread ID to update"),
-  status: z.enum(['active', 'fixed', 'wontfix', 'closed', 'pending'])
-    .describe("The new thread status")
+export const UpdatePRThreadStatusSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    threadId: z.number(),
+    status: z.string(),
+    projectId: z.string()
 });
 
-// Schema for creating PR comment
-export const CreatePRCommentSchema = BasePRSchema.extend({
-  content: z.string().describe("The comment content"),
-  parentCommentId: z.number().optional().describe("Parent comment ID for replies"),
-  filePath: z.string().optional().describe("File path for file-specific comments"),
-  lineNumber: z.number().optional().describe("Line number for file comments")
+export const CreatePRCommentSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    content: z.string(),
+    projectId: z.string(),
+    filePath: z.string().optional(),
+    lineNumber: z.number().optional(),
+    parentCommentId: z.number().optional()
 });
 
-// Schema for getting PR files
-export const GetPRFilesSchema = BasePRSchema.extend({
-  compareTo: z.string().optional().describe("Compare changes to specific commit")
+export const GetPRFilesSchema = z.object({
+    repositoryId: z.string(),
+    pullRequestId: z.number(),
+    projectId: z.string(),
+    compareTo: z.string().optional()
 });

@@ -115,7 +115,7 @@ export async function listPullRequests(
 export async function listPRComments(
   connection: WebApi,
   args: z.infer<typeof schemas.ListPRCommentsSchema>
-): Promise<GitPullRequestCommentThread[]> {
+): Promise<schemas.PullRequestCommentResponse[]> {
   try {
     const gitApi = await connection.getGitApi();
     const threads = await gitApi.getThreads(
@@ -124,7 +124,7 @@ export async function listPRComments(
       args.projectId
     );
 
-    return threads;
+    return schemas.processPullRequestComments(threads);
   } catch (error) {
     throw new Error(`Failed to list PR comments: ${error instanceof Error ? error.message : String(error)}`);
   }
