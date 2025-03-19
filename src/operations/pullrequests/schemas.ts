@@ -12,7 +12,7 @@ export interface PullRequestCommentResponse {
     filePath: string;
     location: PullRequestCommentLocation;
     content: string;
-    status: number;
+    status: string;
     threadId: number;
     author: string;
 }
@@ -31,6 +31,30 @@ interface ValidThread extends GitPullRequestCommentThread {
     };
     status: CommentThreadStatus;
     id: number;
+}
+
+/**
+ * Convert CommentThreadStatus enum value to string representation
+ */
+function getCommentThreadStatusString(status: CommentThreadStatus): string {
+    switch (status) {
+        case CommentThreadStatus.Unknown:
+            return 'Unknown';
+        case CommentThreadStatus.Active:
+            return 'Active';
+        case CommentThreadStatus.Fixed:
+            return 'Fixed';
+        case CommentThreadStatus.WontFix:
+            return 'WontFix';
+        case CommentThreadStatus.Closed:
+            return 'Closed';
+        case CommentThreadStatus.ByDesign:
+            return 'ByDesign';
+        case CommentThreadStatus.Pending:
+            return 'Pending';
+        default:
+            return 'Unknown';
+    }
 }
 
 // Using the actual Azure DevOps API type instead of our custom interface
@@ -57,7 +81,7 @@ export function processPullRequestComments(threads: GitPullRequestCommentThread[
                 endOffset: thread.threadContext.rightFileEnd?.offset
             },
             content: thread.comments[0].content,
-            status: thread.status,
+            status: getCommentThreadStatusString(thread.status),
             threadId: thread.id,
             author: thread.comments[0].author.displayName
         }));
