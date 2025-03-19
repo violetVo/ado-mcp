@@ -3,24 +3,25 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { WebApi } from 'azure-devops-node-api';
-import { VERSION } from "./config/version";
-import { AzureDevOpsConfig } from "./types/config";
-import { 
-  AzureDevOpsAuthenticationError, 
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import { AuthenticationMethod, AzureDevOpsClient } from './auth';
+import {
+  AzureDevOpsAuthenticationError,
   AzureDevOpsError,
   AzureDevOpsResourceNotFoundError,
   AzureDevOpsValidationError,
   isAzureDevOpsError
 } from "./common/errors";
-import { AuthenticationMethod, AzureDevOpsClient } from './auth';
+import { VERSION } from "./config/version";
+import { AzureDevOpsConfig } from "./types/config";
 
 // Import our operation modules
-import * as projects from './operations/projects';
-import * as workitems from './operations/workitems';
-import * as repositories from './operations/repositories';
 import * as organizations from './operations/organizations';
+import * as projects from './operations/projects';
+import * as pullrequests from './operations/pullrequests';
+import * as repositories from './operations/repositories';
+import * as workitems from './operations/workitems';
 
 // Create a safe console logging function that won't interfere with MCP protocol
 function safeLog(message: string) {
@@ -102,6 +103,42 @@ export function createAzureDevOpsServer(config: AzureDevOpsConfig): Server {
           name: "list_repositories",
           description: "List repositories in a project",
           inputSchema: zodToJsonSchema(repositories.ListRepositoriesSchema),
+        },
+        // Pull Request tools
+        {
+          name: "get_pull_request",
+          description: "Get details of a specific pull request",
+          inputSchema: zodToJsonSchema(pullrequests.GetPullRequestSchema),
+        },
+        {
+          name: "list_pull_requests",
+          description: "List pull requests in a repository",
+          inputSchema: zodToJsonSchema(pullrequests.ListPullRequestsSchema),
+        },
+        {
+          name: "list_pr_comments",
+          description: "List all comments in a pull request",
+          inputSchema: zodToJsonSchema(pullrequests.ListPRCommentsSchema),
+        },
+        {
+          name: "update_pr_comment",
+          description: "Update an existing pull request comment",
+          inputSchema: zodToJsonSchema(pullrequests.UpdatePRCommentSchema),
+        },
+        {
+          name: "update_pr_thread_status",
+          description: "Update the status of a pull request thread",
+          inputSchema: zodToJsonSchema(pullrequests.UpdatePRThreadStatusSchema),
+        },
+        {
+          name: "create_pr_comment",
+          description: "Create a new comment in a pull request",
+          inputSchema: zodToJsonSchema(pullrequests.CreatePRCommentSchema),
+        },
+        {
+          name: "get_pr_files",
+          description: "Get files changed in a pull request",
+          inputSchema: zodToJsonSchema(pullrequests.GetPRFilesSchema),
         },
       ],
     };
@@ -218,6 +255,57 @@ export function createAzureDevOpsServer(config: AzureDevOpsConfig): Server {
         case 'list_repositories': {
           const args = repositories.ListRepositoriesSchema.parse(request.params.arguments);
           const result = await repositories.listRepositories(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+
+        // Pull Request operations
+        case 'get_pull_request': {
+          const args = pullrequests.GetPullRequestSchema.parse(request.params.arguments);
+          const result = await pullrequests.getPullRequest(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'list_pull_requests': {
+          const args = pullrequests.ListPullRequestsSchema.parse(request.params.arguments);
+          const result = await pullrequests.listPullRequests(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'list_pr_comments': {
+          const args = pullrequests.ListPRCommentsSchema.parse(request.params.arguments);
+          const result = await pullrequests.listPRComments(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'update_pr_comment': {
+          const args = pullrequests.UpdatePRCommentSchema.parse(request.params.arguments);
+          const result = await pullrequests.updatePRComment(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'update_pr_thread_status': {
+          const args = pullrequests.UpdatePRThreadStatusSchema.parse(request.params.arguments);
+          const result = await pullrequests.updatePRThreadStatus(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'create_pr_comment': {
+          const args = pullrequests.CreatePRCommentSchema.parse(request.params.arguments);
+          const result = await pullrequests.createPRComment(connection, args);
+          return {
+            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          };
+        }
+        case 'get_pr_files': {
+          const args = pullrequests.GetPRFilesSchema.parse(request.params.arguments);
+          const result = await pullrequests.getPRFiles(connection, args);
           return {
             content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
           };
