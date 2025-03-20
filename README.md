@@ -202,7 +202,25 @@ This project follows Test-Driven Development practices. Each new feature should:
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for full details.
+
+### Attribution and Modifications
+
+This software was originally created by the azure-devops-mcp contributors. When using, modifying, or redistributing this software:
+
+- You must include the original LICENSE file
+- You must maintain the original copyright notice
+- If you modify the code, clearly state your modifications and their dates
+- Attribution to the original project is required
+
+### Using in CLINE's MCP Servers Marketplace
+
+When publishing this project to CLINE's MCP servers marketplace:
+
+1. Reference the original project
+2. Include the original MIT License
+3. Clearly document any modifications made
+4. Maintain all original documentation while marking any changes
 
 ## Contributing
 
