@@ -33,7 +33,9 @@ function convertToPullRequestStatus(status: string): PullRequestStatus {
  * Convert string status to CommentThreadStatus enum
  */
 function convertToCommentThreadStatus(status: string): CommentThreadStatus {
-  switch (status) {
+  switch (status.toLowerCase()) {
+    case 'unknown':
+      return CommentThreadStatus.Unknown;
     case 'active':
       return CommentThreadStatus.Active;
     case 'fixed':
@@ -42,6 +44,8 @@ function convertToCommentThreadStatus(status: string): CommentThreadStatus {
       return CommentThreadStatus.WontFix;
     case 'closed':
       return CommentThreadStatus.Closed;
+    case 'bydesign':
+      return CommentThreadStatus.ByDesign;
     case 'pending':
       return CommentThreadStatus.Pending;
     default:

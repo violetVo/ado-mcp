@@ -97,7 +97,7 @@ export const GetPullRequestSchema = z.object({
 export const ListPullRequestsSchema = z.object({
     repositoryId: z.string(),
     projectId: z.string(),
-    status: z.string().optional(),
+    status: z.enum(['active', 'abandoned', 'completed', 'all']).optional(),
     creatorId: z.string().optional(),
     reviewerId: z.string().optional(),
     sourceRefName: z.string().optional(),
@@ -124,7 +124,10 @@ export const UpdatePRThreadStatusSchema = z.object({
     repositoryId: z.string(),
     pullRequestId: z.number(),
     threadId: z.number(),
-    status: z.string(),
+    status: z.enum([
+      'Unknown', 'Active', 'Fixed', 'WontFix',
+      'Closed', 'ByDesign', 'Pending'
+    ]),
     projectId: z.string()
 });
 
