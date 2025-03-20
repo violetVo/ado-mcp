@@ -1,100 +1,171 @@
-# Product Context
+# Product Context: Azure DevOps MCP Server
 
 ## Purpose
-The Azure DevOps MCP Server bridges the gap between AI agents and Azure DevOps, enabling seamless automation and interaction with Azure DevOps services through the Model Context Protocol (MCP).
+The Azure DevOps MCP Server addresses the critical need for standardized AI integration with Azure DevOps, enabling AI assistants to interact with development workflows naturally and securely. This bridge between AI models and Azure DevOps enhances development productivity by allowing AI to actively participate in the software development lifecycle.
 
-## Problems Solved
+## Problem Space
 
-### 1. Integration Complexity
-- **Problem:** Integrating AI agents with Azure DevOps requires complex authentication and API handling
-- **Solution:** Provides standardized MCP interface with built-in authentication and error handling
+### Current Challenges
+1. **Integration Complexity**
+   - Multiple APIs and authentication methods
+   - Varied access patterns and permissions
+   - Complex workflow orchestration
 
-### 2. Enterprise Requirements
-- **Problem:** Enterprise environments need secure, reliable Azure DevOps automation
-- **Solution:** Supports multiple authentication methods and enterprise security requirements
+2. **AI Integration Barriers**
+   - Limited AI access to development context
+   - Manual synchronization of work items
+   - Fragmented development workflows
 
-### 3. Development Workflow
-- **Problem:** Managing Azure DevOps operations programmatically is complex
-- **Solution:** Streamlined tools for common operations with type safety and validation
+3. **Security Concerns**
+   - Credential management
+   - Access control
+   - Audit trail requirements
+
+## Solution Overview
+
+### Key Features
+1. **Standardized Access**
+   - Unified MCP protocol implementation
+   - Consistent tool interfaces
+   - Structured data exchange
+
+2. **Comprehensive Integration**
+   - Full Azure DevOps API coverage
+   - Multiple authentication methods
+   - Granular permission control
+
+3. **AI-First Design**
+   - Natural language interaction
+   - Context-aware operations
+   - Workflow automation support
 
 ## User Experience Goals
 
-### For AI Agents
-1. **Seamless Integration**
-   - Standard MCP interface
-   - Consistent error handling
-   - Type-safe operations
+### AI Assistant Perspective
+1. **Natural Interaction**
+   - Clear tool definitions
+   - Structured input/output
+   - Error handling with context
 
-2. **Comprehensive Access**
-   - Organizations management
-   - Project operations
-   - Work item tracking
-   - Repository management
-   - Pull request handling
+2. **Context Awareness**
+   - Project structure understanding
+   - Work item relationships
+   - Repository navigation
 
-### For Developers
+3. **Workflow Integration**
+   - End-to-end task completion
+   - Status tracking
+   - Progress reporting
+
+### Developer Perspective
 1. **Easy Setup**
    - Clear documentation
-   - Multiple auth options
-   - Simple configuration
+   - Simple authentication
+   - Minimal configuration
 
-2. **Reliable Operation**
-   - Robust error handling
-   - Rate limit management
-   - Type safety throughout
+2. **Secure Operation**
+   - Controlled access
+   - Audit logging
+   - Safe defaults
 
-## Key Features
+3. **Reliable Performance**
+   - Consistent response times
+   - Error resilience
+   - Rate limit handling
 
-### 1. Organization Management
-- List organizations
-- Access organization details
-- Manage organization settings
+## Use Case Scenarios
 
-### 2. Project Operations
-- Create/list/update projects
-- Manage project settings
-- Access project resources
+### 1. Work Item Management
+```mermaid
+flowchart LR
+    AI[AI Assistant] --> Server[MCP Server]
+    Server --> ADO[Azure DevOps]
+    ADO --> Server
+    Server --> AI
+    
+    style AI fill:#f9f,stroke:#333,stroke-width:2px
+    style Server fill:#bbf,stroke:#333,stroke-width:2px
+    style ADO fill:#bfb,stroke:#333,stroke-width:2px
+```
 
-### 3. Work Item Tracking
-- Create work items
-- Update status
-- Query work items
-- Manage relationships
+- Create and update work items
+- Track progress and status
+- Link related items
 
-### 4. Repository Operations
-- Access repositories
-- Manage branches
-- Handle pull requests
+### 2. Code Review Process
+```mermaid
+flowchart TD
+    PR[Create PR] --> Review[Review Changes]
+    Review --> Comment[Add Comments]
+    Comment --> Update[Update Code]
+    Update --> Complete[Complete PR]
+    
+    style PR fill:#f9f,stroke:#333,stroke-width:2px
+    style Complete fill:#bfb,stroke:#333,stroke-width:2px
+```
+
+- Review pull requests
+- Provide feedback
 - Track changes
 
-## Success Metrics
+### 3. Project Planning
+```mermaid
+flowchart LR
+    Plan[Plan Work] --> Create[Create Items]
+    Create --> Assign[Assign Tasks]
+    Assign --> Track[Track Progress]
+    
+    style Plan fill:#f9f,stroke:#333,stroke-width:2px
+    style Track fill:#bfb,stroke:#333,stroke-width:2px
+```
 
-### Integration Success
-- Successful API calls ratio
-- Error rate monitoring
-- Authentication success rate
+- Create user stories
+- Plan iterations
+- Track milestones
 
-### Performance
-- Response time metrics
-- Rate limit adherence
-- Resource utilization
+## Integration Points
 
-### Developer Experience
-- Setup time
-- Documentation completeness
-- Type safety coverage
+### 1. Azure DevOps
+- Organizations
+- Projects
+- Repositories
+- Work Items
+- Pull Requests
 
-## Roadmap Considerations
+### 2. AI Assistants
+- Claude
+- Other MCP-compatible AI models
 
-### Near Term
-1. Complete core operation set
-2. Enhance error handling
-3. Improve documentation
-4. Add integration tests
+### 3. Development Tools
+- VS Code
+- Azure DevOps CLI
+- Git clients
 
-### Future
-1. Implement caching
-2. Add batch operations
-3. Support webhooks
-4. Enable event streaming
-5. Expand tool capabilities
+## Success Criteria
+
+### Functional Success
+1. Complete API coverage
+2. Reliable authentication
+3. Efficient operation
+
+### User Success
+1. Easy integration
+2. Clear documentation
+3. Reliable performance
+
+### Technical Success
+1. Test coverage
+2. Error handling
+3. Security compliance
+
+## Feedback Channels
+- GitHub Issues
+- Documentation Updates
+- Integration Testing
+- User Feedback
+
+## Evolution Strategy
+1. Core functionality first
+2. Iterative enhancement
+3. Community-driven development
+4. Regular updates and maintenance
