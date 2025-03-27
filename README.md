@@ -44,8 +44,8 @@ The server is structured around the Model Context Protocol (MCP) for communicati
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/azure-devops-mcp.git
-   cd azure-devops-mcp
+   git clone https://github.com/violetVo/ado-mcp.git
+   cd ado-mcp
    ```
 
 2. Install dependencies:
@@ -56,7 +56,7 @@ The server is structured around the Model Context Protocol (MCP) for communicati
 3. Set up your environment:
 
    Option A: Using the automated setup script (recommended):
-   ```
+   ``` 
    chmod +x setup_env.sh
    ./setup_env.sh
    ```
