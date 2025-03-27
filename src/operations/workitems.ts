@@ -122,18 +122,12 @@ function constructDefaultWiql(projectId: string, teamId?: string): string {
  */
 export async function getWorkItem(
   connection: WebApi,
-  workItemId: number,
-  expand?: WorkItemExpand,
+  workItemId: number
 ): Promise<WorkItem> {
   try {
     const witApi = await connection.getWorkItemTrackingApi();
-    const fields = [
-      'System.Id',
-      'System.Title',
-      'System.State',
-      'System.AssignedTo',
-    ];
-    const workItem = await witApi.getWorkItem(workItemId, fields, undefined, expand);
+    // Get work item with default fields
+    const workItem = await witApi.getWorkItem(workItemId);
 
     if (!workItem) {
       throw new AzureDevOpsResourceNotFoundError(
@@ -211,6 +205,8 @@ export async function listWorkItems(
       'System.Title',
       'System.State',
       'System.AssignedTo',
+      'Microsoft.VSTS.TCM.ReproSteps',
+      'System.History'
     ];
     const workItems = await witApi.getWorkItems(
       workItemIds,
